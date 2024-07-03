@@ -1,0 +1,28 @@
+<div id="app-pokemon">
+  @defer (when !enChargement()) {
+    <p>{{ nombreTotalDePokemons }} pokémons en base de données</p>
+    <ul id="carte">
+      @for (p of pokemonsAffiches; track p.id) {
+        <li class="carte-detail">
+          <img [src]="p.image" alt=""/>
+          <p>{{ p.nom }}</p>
+          <ul>
+            <li>Catégorie: {{ p.categorie }}</li>
+            <li>Type: {{ p.type }}</li>
+            <li>Taille: {{ formaterNombreFR(p.taille) }} m</li>
+            <li>Poids: {{ formaterNombreFR(p.poids) }} kg</li>
+          </ul>
+        </li>
+      }
+    </ul>
+    <div class="pagination">
+      @for (i of numerosDePage; track i) {
+        <button (click)="pageSuivante(i)">{{ i }}</button>
+      }
+    </div>
+  } @placeholder  {
+    <span>Chargement des pokémons...</span>
+  }
+
+</div>
+
