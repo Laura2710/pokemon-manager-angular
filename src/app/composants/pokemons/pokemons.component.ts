@@ -1,12 +1,13 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, Inject, OnInit, signal} from '@angular/core';
-import { PokemonService } from '../../services/pokemon.service';
-import { ActivatedRoute } from "@angular/router";
+import {PokemonService} from '../../services/pokemon.service';
+import {ActivatedRoute} from "@angular/router";
+import {SearchBarComponent} from "../search-bar/search-bar.component";
 
 @Component({
   selector: 'app-pokemons',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SearchBarComponent],
   templateUrl: './pokemons.component.html',
   styleUrls: ['./pokemons.component.css']
 })
@@ -19,18 +20,23 @@ export class PokemonsComponent implements OnInit {
   nombreTotalDePages: number = 0;  // Nombre total de pages
   numerosDePage: number[] = [];  // Tableau contenant les numéros de page
   pageActuelle: number = 1; // Page actuelle
-  enChargement= signal(true);// Variable pour suivre l'état de chargement
+  enChargement = signal(true);// Variable pour suivre l'état de chargement
+  dataLoadedSearch: boolean = false; // Drapeau pour vérifier si les données sont chargées
 
-  constructor(@Inject(PokemonService) private pokemonService: PokemonService, private route: ActivatedRoute) { }
+  constructor(@Inject(PokemonService) private pokemonService: PokemonService, private route: ActivatedRoute) {
+  }
 
   // Avant que le composant soit affiché
   ngOnInit() {
     this.route.paramMap.subscribe(param => {
       this.generationSelectionnee = param.get("generation");
-      if (this.generationSelectionnee !== null) {
-        this.obtenirPokemonParGeneration(`https://pokeapi.co/api/v2/generation/${this.generationSelectionnee}`);
-      } else {
-        this.obtenirTousLesPokemons();
+      if (!this.dataLoadedSearch) { // Vérifiez si les données sont déjà chargées
+
+        if (this.generationSelectionnee !== null) {
+          this.obtenirPokemonParGeneration(`https://pokeapi.co/api/v2/generation/${this.generationSelectionnee}`);
+        } else {
+          this.obtenirTousLesPokemons();
+        }
       }
     });
   }
@@ -89,7 +95,10 @@ export class PokemonsComponent implements OnInit {
    * @returns Nombre formaté en chaîne de caractères
    */
   formaterNombreFR(valeur: number | null | undefined): string {
-    return valeur != null ? valeur.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : 'N/A';
+    return valeur != null ? valeur.toLocaleString('fr-FR', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    }) : 'N/A';
   }
 
   /**
@@ -97,7 +106,7 @@ export class PokemonsComponent implements OnInit {
    */
   calculerPages(): void {
     this.nombreTotalDePages = Math.ceil(this.tousLesPokemons.length / this.nombreDePokemonParPage);
-    this.numerosDePage = Array.from({ length: this.nombreTotalDePages }, (_, i) => i + 1);
+    this.numerosDePage = Array.from({length: this.nombreTotalDePages}, (_, i) => i + 1);
   }
 
   /**
@@ -124,5 +133,21 @@ export class PokemonsComponent implements OnInit {
     const indexDebut = (this.pageActuelle - 1) * this.nombreDePokemonParPage;
     const indexFin = indexDebut + this.nombreDePokemonParPage;
     this.pokemonsAffiches = this.tousLesPokemons.slice(indexDebut, indexFin);
+  }
+
+  onPokemonDataReceived(data: any) {
+    console.log(data);
+    this.pokemonService.obtenirDetailsDesPokemons(data).subscribe({
+      next: (detailedPokemons: any[]) => {
+        this.tousLesPokemons = detailedPokemons;
+        this.nombreTotalDePokemons = this.tousLesPokemons.length;
+        this.calculerPages();
+        this.mettreAJourPokemonsAffiches();
+        this.dataLoadedSearch = true;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 }

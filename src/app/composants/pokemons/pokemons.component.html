@@ -1,4 +1,5 @@
 <div id="app-pokemon">
+  <app-search-bar (pokemonData)="onPokemonDataReceived($event)"></app-search-bar>
   @defer (when !enChargement()) {
     <p>{{ nombreTotalDePokemons }} pokémons en base de données</p>
     <ul id="carte">

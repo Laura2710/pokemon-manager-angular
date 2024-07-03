@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {forkJoin, map, mergeMap, Observable} from "rxjs";
+import {forkJoin, map, mergeMap, Observable, switchMap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -37,15 +37,15 @@ export class PokemonService {
 
   /**
    * Méthode pour obtenir les détails et les catégories des Pokémonss
-   * @param pokemons Liste des Pokémonss
+   * @param pokemons Liste des Pokémons
    * @returns Observable avec les détails des Pokémonss
    */
-  obtenirDetailsDesPokemons(pokemons: any[]): Observable<object[]> {
-    const requetes = pokemons.map(pokemon =>
+  obtenirDetailsDesPokemons(pokemons: object[]): Observable<object[]> {
+    const requetes  = pokemons.map((pokemon: object) =>
       this._obtenirDetail(pokemon).pipe(
-        mergeMap((details: any) =>
+        mergeMap((details: object) =>
           this._obtenirCategories(details).pipe(
-            map((categorie: any) => this.formatterDetailsPokemon(details, categorie))
+            map((categorie: object) => this.formatterDetailsPokemon(details, categorie))
           )
         )
       )
@@ -54,11 +54,11 @@ export class PokemonService {
     return forkJoin(requetes);
   }
 
-  _obtenirDetail(pokemon: any): Observable<any> {
+  _obtenirDetail(pokemon: any): Observable<object> {
     return this.http.get(pokemon.url);
   }
 
-  _obtenirCategories(pokemon: any): Observable<any> {
+  _obtenirCategories(pokemon: any): Observable<object> {
     return this.http.get(pokemon.species.url);
   }
 
@@ -95,12 +95,25 @@ export class PokemonService {
   private formatterDetailsPokemon(details: any, detailsCategorie: any): any {
     return {
       id: details.id,
-      nom: detailsCategorie.names[4].name.toUpperCase(),
-      categorie: detailsCategorie.genera[3]?.genus || 'N/A',
-      type: details.types?.map((type: any) => type.type.name).join(', '),
-      taille: details.height / 10 || 'N/A',
-      poids: details.weight / 10 || 'N/A',
-      image: details.sprites?.front_shiny
+      nom: details.name.toUpperCase(),
+      categorie: detailsCategorie.genera.find((genus: any) => genus.language.name === 'en').genus,
+      type: details.types.map((t: any) => t.type.name).join(', '),
+      taille: details.height / 10,
+      poids: details.weight / 10,
+      image: details.sprites.front_shiny
     };
   }
+
+  /**
+   * Méthode pour obtenir la liste des Pokémonss
+   * @returns Observable avec la liste des Pokémons
+   */
+  obtenirListePokemonsParNom(nom: string): Observable<any> {
+    return this.http.get<any>("https://pokeapi.co/api/v2/pokemon?limit=1000").pipe(
+      map((response: any) => {
+        return response.results.filter((pokemon: any) => pokemon.name.startsWith(nom.toLowerCase()));
+      })
+    );
+  }
+
 }
