@@ -1,17 +1,18 @@
 <div id="app-pokemon">
   <app-search-bar (pokemonData)="onPokemonDataReceived($event)"></app-search-bar>
-  @defer (when !enChargement()) {
+
+  @defer (when tousLesPokemonsBis$! | async) {
     <p>{{ nombreTotalDePokemons }} pokémons en base de données</p>
     <ul id="carte">
-      @for (p of pokemonsAffiches; track p.id) {
+      @for (pokemon of pokemonsAffiches; track pokemon.id) {
         <li class="carte-detail">
-          <img [src]="p.image" alt=""/>
-          <p>{{ p.nom }}</p>
+          <img [src]="pokemon.image" alt=""/>
+          <p>{{ pokemon.nom }}</p>
           <ul>
-            <li>Catégorie: {{ p.categorie }}</li>
-            <li>Type: {{ p.type }}</li>
-            <li>Taille: {{ formaterNombreFR(p.taille) }} m</li>
-            <li>Poids: {{ formaterNombreFR(p.poids) }} kg</li>
+            <li>Catégorie: {{ pokemon.categorie }}</li>
+            <li>Type: {{ pokemon.type }}</li>
+            <li>Taille: {{ formaterNombreFR(pokemon.taille) }} m</li>
+            <li>Poids: {{ formaterNombreFR(pokemon.poids) }} kg</li>
           </ul>
         </li>
       }
@@ -21,9 +22,8 @@
         <button (click)="pageSuivante(i)">{{ i }}</button>
       }
     </div>
-  } @placeholder  {
+  } @placeholder {
     <span>Chargement des pokémons...</span>
   }
-
 </div>
 
