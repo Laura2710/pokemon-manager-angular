@@ -1,10 +1,15 @@
 <div id="app-generation">
   <h2>Les différentes générations :</h2>
   <ul>
-    @for (g of generations$ | async; track g.name) {
-      <li>
-        <a [routerLink]="['/pokemons/', g.name]"> {{ g.name.toUpperCase() }}</a>
-      </li>
+    @if(generations$! | async; as generations ) {
+      @for (g of generations; track g.name) {
+        <li>
+          <a [routerLink]="['/pokemons/', g.name]">{{ g.name.toUpperCase() }}</a>
+        </li>
+      }
     }
+
+
+
   </ul>
 </div>
