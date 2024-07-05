@@ -1,5 +1,5 @@
 <form (ngSubmit)="searchPokemon()">
   <label for="pokemon">Rechercher par nom:</label>
-  <input type="text" id="pokemon" [(ngModel)]="namePokemon" name="pokemon">
+  <input [(ngModel)]="namePokemon" id="pokemon" name="pokemon" type="text">
   <button type="submit">Chercher</button>
 </form>

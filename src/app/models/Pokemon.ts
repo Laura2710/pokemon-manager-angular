@@ -5,6 +5,6 @@ export interface Pokemon {
   categorie: string,
   type: string,
   taille: number,
-  poids:number,
+  poids: number,
   url: string
 }

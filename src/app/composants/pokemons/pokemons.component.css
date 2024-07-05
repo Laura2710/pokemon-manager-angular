@@ -21,10 +21,12 @@ ul p {
   border: none;
   align-items: center;
 }
+
 #carte img {
   height: 120px;
   object-fit: contain;
 }
+
 li {
   list-style-type: none;
   padding: .25em;
@@ -39,12 +41,14 @@ li {
   padding: 2em;
   box-shadow: 0px 7px 10px #e1e1e1;
 }
+
 .pagination {
   display: flex;
   justify-content: center;
   margin-top: 1em;
   margin-bottom: 5em;
 }
+
 .pagination button {
   height: 32px;
   width: 32px;

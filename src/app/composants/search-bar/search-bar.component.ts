@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Output} from '@angular/core';
-import {FormBuilder, FormsModule} from "@angular/forms";
+import {FormsModule} from "@angular/forms";
 import {PokemonService} from "../../services/pokemon.service";
 
 @Component({
@@ -12,14 +12,17 @@ import {PokemonService} from "../../services/pokemon.service";
   styleUrl: './search-bar.component.css'
 })
 export class SearchBarComponent {
-  namePokemon= '';
+  namePokemon = '';
   @Output() pokemonData: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(@Inject(PokemonService) private pokemonsService: PokemonService) {}
+  constructor(@Inject(PokemonService) private pokemonsService: PokemonService) {
+  }
 
   searchPokemon() {
     this.pokemonsService.obtenirListePokemonsParNom(this.namePokemon).subscribe({
-          next: (data) => {this.pokemonData.emit(data)}
+        next: (data) => {
+          this.pokemonData.emit(data)
+        }
       }
     )
   }

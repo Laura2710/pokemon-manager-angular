@@ -1,8 +1,10 @@
 <div id="app-generation">
   <h2>Les différentes générations :</h2>
-  <ul >
-    <li *ngFor="let g of generations$ | async">
-      <a [routerLink]="['/pokemons/', g.name]"> {{ g.name.toUpperCase() }}</a>
-    </li>
+  <ul>
+    @for (g of generations$ | async; track g.name) {
+      <li>
+        <a [routerLink]="['/pokemons/', g.name]"> {{ g.name.toUpperCase() }}</a>
+      </li>
+    }
   </ul>
 </div>

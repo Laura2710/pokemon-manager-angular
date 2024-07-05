@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterModule, RouterOutlet} from '@angular/router';
-import { PokemonsComponent } from './composants/pokemons/pokemons.component';
-import { GenerationsComponent } from './composants/generations/generations.component';
+import {PokemonsComponent} from './composants/pokemons/pokemons.component';
+import {GenerationsComponent} from './composants/generations/generations.component';
 import {NgOptimizedImage} from "@angular/common";
 
 @Component({
